@@ -1,0 +1,137 @@
+package com.androidgame.controller;
+
+import java.util.Random;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.androidgame.model.Tetriminos;
+import com.androidgame.model.TetrisRules;
+import com.androidgame.tetrisyy.R;
+import com.androidgame.view.TetrisView;
+
+public class MainActivity extends ActionBarActivity implements OnTouchListener {
+	
+	private TetrisRules tetrisGame;
+	private TetrisView tetrisView;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.activity_main);
+		
+		tetrisGame = new TetrisRules();
+		
+		// change later
+		tetrisGame.startGame();
+		
+		/*
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.container, new PlaceholderFragment()).commit();
+		}
+		*/
+		
+		tetrisView = (TetrisView) findViewById(R.id.tetris_view);
+		tetrisView.setOnTouchListener(this);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * A placeholder fragment containing a simple view.
+	 */
+	public static class PlaceholderFragment extends Fragment {
+
+		public PlaceholderFragment() {
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.fragment_main, container,
+					false);
+			return rootView;
+		}
+	}
+
+	@Override
+	public boolean onTouch(View view, MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			// test to see if this works
+			// Toast toast = Toast.makeText(this, String.valueOf(getRandomColor()), Toast.LENGTH_SHORT);
+			// toast.show();
+			// generate a new tetris piece from tetris game
+			// check if the piece is at the bottom
+			if (tetrisGame.hasReachedBottom() || tetrisGame.hasCollided()) {
+				tetrisGame.getNextPiece();
+				tetrisGame.addTetrisPieceToLocation(0, 0);
+				tetrisView.updateGridPosition(tetrisGame.getTetrisPieceCurrentRow(), tetrisGame.getTetrisPieceCurrentColumn(), getRandomColor(), true);
+			} else {
+			
+				// put the tetris piece at top row, middle column.
+				//tetrisGame.addTetrisPieceToLocation(row, column);
+		
+				tetrisGame.dropTetrisPiece();
+			
+				// update the view
+				tetrisView.updateGridPosition(tetrisGame.getTetrisPieceCurrentRow() - 1, tetrisGame.getTetrisPieceCurrentColumn(), Color.BLACK, false);
+				tetrisView.updateGridPosition(tetrisGame.getTetrisPieceCurrentRow(), tetrisGame.getTetrisPieceCurrentColumn(), getRandomColor(), true);
+			}
+			
+			return true;
+		}			
+		return false;
+	}
+	
+	// test method
+	private int getRandomColor() {
+		// test with 5 colors.
+		Random random = new Random();
+		int colorpicker = random.nextInt(5);
+		
+		switch (colorpicker) {
+		case 0:
+			return Color.BLUE;
+		case 1:
+			return Color.GREEN;
+		case 2:
+			return Color.YELLOW;
+		case 3:
+			return Color.MAGENTA;
+		case 4:
+			return Color.RED;
+		default:
+			return Color.BLACK;
+		}
+	}
+}
