@@ -91,20 +91,35 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 			// Toast toast = Toast.makeText(this, String.valueOf(getRandomColor()), Toast.LENGTH_SHORT);
 			// toast.show();
 			// generate a new tetris piece from tetris game
-			// check if the piece is at the bottom
-			if (tetrisGame.hasReachedBottom() || tetrisGame.hasCollided()) {
+			// check if the piece is at the bottom 
+			
+			// checking if dropping piece collided with piece below it.
+			int tetrisRow = tetrisGame.getTetrisPieceCurrentRow() + 1;
+			int tetrisColumn = tetrisGame.getTetrisPieceCurrentColumn();
+			
+			if (tetrisGame.hasReachedBottomEdge() || tetrisGame.hasCollided(tetrisRow, tetrisColumn)) {
 				tetrisGame.getNextPiece();
-				tetrisGame.addTetrisPieceToLocation(0, 0);
+				
+				// simple test case
+				tetrisGame.setTetrisPieceToLocation(0, 5);
+				
 				tetrisView.updateGridPosition(tetrisGame.getTetrisPieceCurrentRow(), tetrisGame.getTetrisPieceCurrentColumn(), getRandomColor(), true);
 			} else {
 			
 				// put the tetris piece at top row, middle column.
 				//tetrisGame.addTetrisPieceToLocation(row, column);
-		
+				
+				int previousRow = tetrisGame.getTetrisPieceCurrentRow();
+				int previousColumn = tetrisGame.getTetrisPieceCurrentColumn();
+				
+				// testing tetris controls
+				tetrisGame.moveTetrisPieceLeft();
 				tetrisGame.dropTetrisPiece();
-			
+	
+				 //tetrisGame.moveTetrisPieceRight();
+				  
 				// update the view
-				tetrisView.updateGridPosition(tetrisGame.getTetrisPieceCurrentRow() - 1, tetrisGame.getTetrisPieceCurrentColumn(), Color.BLACK, false);
+				tetrisView.updateGridPosition(previousRow, previousColumn, Color.BLACK, false);
 				tetrisView.updateGridPosition(tetrisGame.getTetrisPieceCurrentRow(), tetrisGame.getTetrisPieceCurrentColumn(), getRandomColor(), true);
 			}
 			

@@ -42,7 +42,7 @@ public class TetrisRules {
 	
 	public void startGame() {
 		getNextPiece();
-		addTetrisPieceToLocation(0, 0);
+		setTetrisPieceToLocation(0, 0);
 	}
 	/*
 	public void startGame() {
@@ -118,8 +118,9 @@ public class TetrisRules {
 	}
 	
 	// test method
-	public void addTetrisPieceToLocation(int row, int column) {
-		tetrisGrid.occupyPosition(row, column);
+	public void setTetrisPieceToLocation(int row, int column) {
+		if (currentPiece != null)
+			currentPiece.updatePosition(column, row);
 	}
 	
 	// test method
@@ -130,7 +131,7 @@ public class TetrisRules {
 		int column = currentPiece.getColumn();
 		
 		// drop the piece one row down on the grid unless it is at the bottom
-		if (!hasReachedBottom() && !hasCollided()) {
+		if (!hasReachedBottomEdge() && !hasCollidedBelow()) {
 			tetrisGrid.unoccupyPosition(row, column);
 			tetrisGrid.occupyPosition(row + 1, column);
 			
@@ -139,6 +140,37 @@ public class TetrisRules {
 		}
 	}
 	
+	// test method
+	public void moveTetrisPieceLeft() {
+		// retrieve the current location of the piece
+		int row = currentPiece.getRow();
+		int column = currentPiece.getColumn();
+		
+		// move the piece to the left on the grid unless it is touching the grid's left corner
+		if (!hasReachedLeftEdge() && !hasCollidedLeft()) {
+			tetrisGrid.unoccupyPosition(row, column);
+			tetrisGrid.occupyPosition(row, column - 1); 
+			
+			// update tetris piece
+			currentPiece.updatePosition(column - 1, row);
+		}
+	}
+	
+	// test method
+	public void moveTetrisPieceRight() {
+		// retrieve the current location of the piece
+		int row = currentPiece.getRow();
+		int column = currentPiece.getColumn();
+		
+		// move the piece to the right on the grid unless it is touching the grid's right corner
+		if (!hasReachedRightEdge() && !hasCollidedRight()) {
+			tetrisGrid.unoccupyPosition(row, column);
+			tetrisGrid.occupyPosition(row, column + 1);
+			
+			// update tetris piece
+			currentPiece.updatePosition(column + 1, row);
+		}
+	}
 	public int getTetrisPieceCurrentRow() {
 			return currentPiece.getRow();
 	}
@@ -147,11 +179,32 @@ public class TetrisRules {
 			return currentPiece.getColumn();
 	}
 	
-	public boolean hasReachedBottom() {
+	public boolean hasReachedBottomEdge() {
 		return currentPiece.getRow() == (tetrisGrid.getGridRows() - 1);
 	}
 	
-	public boolean hasCollided() {
-		return !tetrisGrid.isEmpty(currentPiece.getRow() + 1, currentPiece.getColumn());
+	public boolean hasReachedLeftEdge() {
+		return currentPiece.getColumn() == 0;
+	}
+	
+	public boolean hasReachedRightEdge() {
+		return currentPiece.getColumn() == (tetrisGrid.getGridColumns() - 1);
+	}
+	
+	// update for row, column argument.
+	public boolean hasCollided(int row, int column) {
+		return !tetrisGrid.isEmpty(row, column);
+	}
+	
+	public boolean hasCollidedBelow() {
+		return hasCollided(currentPiece.getRow() + 1, currentPiece.getColumn());
+	}
+	
+	public boolean hasCollidedLeft() {
+		return hasCollided(currentPiece.getRow(), currentPiece.getColumn() - 1);
+	}
+	
+	public boolean hasCollidedRight() {
+		return hasCollided(currentPiece.getRow(), currentPiece.getColumn() + 1);
 	}
 }
