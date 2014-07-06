@@ -11,11 +11,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
-import com.androidgame.model.Tetriminos;
 import com.androidgame.model.TetrisRules;
 import com.androidgame.tetrisyy.R;
 import com.androidgame.view.TetrisView;
@@ -24,6 +25,12 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 	
 	private TetrisRules tetrisGame;
 	private TetrisView tetrisView;
+	
+	// add this later as a possible fragment?
+	private Button leftMoveButton;
+	private Button rightMoveButton;
+	private Button rotateButton;
+	private Button dropButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,9 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 		// change later
 		tetrisGame.startGame();
 		
+		// testing bottom grid clearing
+		//tetrisGame.startGameWithBottomFilled();
+	
 		/*
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -45,6 +55,18 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 		
 		tetrisView = (TetrisView) findViewById(R.id.tetris_view);
 		tetrisView.setOnTouchListener(this);
+		
+		leftMoveButton = (Button) findViewById(R.id.move_left_button);
+		rightMoveButton = (Button) findViewById(R.id.move_right_button);
+		dropButton = (Button) findViewById(R.id.drop_down_button);
+		
+		// This should button should rotate, but for now, it will be used to start game.
+		rotateButton = (Button) findViewById(R.id.rotate_button);
+		
+		leftMoveButton.setOnClickListener(new MoveTetrisPieceLeftButton());
+		rightMoveButton.setOnClickListener(new MoveTetrisPieceRightButton());
+		dropButton.setOnClickListener(new DropButton());
+		rotateButton.setOnClickListener(new RotateButton());
 	}
 
 	@Override
@@ -116,7 +138,7 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 				tetrisGame.moveTetrisPieceLeft();
 				tetrisGame.dropTetrisPiece();
 	
-				 //tetrisGame.moveTetrisPieceRight();
+				//tetrisGame.moveTetrisPieceRight();
 				  
 				// update the view
 				tetrisView.updateGridPosition(previousRow, previousColumn, Color.BLACK, false);
@@ -147,6 +169,164 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 			return Color.RED;
 		default:
 			return Color.BLACK;
+		}
+	}
+	
+	// test method - will update view by using tetrisGame
+	public void updateView(boolean filled) {
+		// we will check bottom row
+		int bottomRow = tetrisGame.getRows() - 1;
+		int bottomColumn = tetrisGame.getGridColumns();
+		
+		for (int c = 0; c < bottomColumn; c++) {
+			if (tetrisGame.isColumnFilled(bottomRow, c)) {
+				tetrisView.updateGridPosition(bottomRow, c, getRandomColor(), filled);
+			} else {
+				tetrisView.updateGridPosition(bottomRow, c, Color.BLACK, filled);
+			}
+		}
+	}
+	
+	private class MoveTetrisPieceLeftButton implements OnClickListener {
+		@Override
+		public void onClick(View view) {
+			// checking if dropping piece collided with piece below it.
+			int tetrisRow = tetrisGame.getTetrisPieceCurrentRow() + 1;
+			int tetrisColumn = tetrisGame.getTetrisPieceCurrentColumn();
+
+			if (tetrisGame.hasReachedBottomEdge()
+					|| tetrisGame.hasCollided(tetrisRow, tetrisColumn)) {
+				tetrisGame.getNextPiece();
+
+				// Check if the row is filled.
+				if (tetrisGame.isBottomRowFilled()) {
+					tetrisGame.clearBottonRow();
+					tetrisGame.cascadeRowDown();
+					
+					updateView(false);
+				}
+				
+				// simple test case
+				tetrisGame.setTetrisPieceToLocation(0, 5);
+
+				tetrisView.updateGridPosition(
+						tetrisGame.getTetrisPieceCurrentRow(),
+						tetrisGame.getTetrisPieceCurrentColumn(),
+						getRandomColor(), true);
+			} else {
+				int previousRow = tetrisGame.getTetrisPieceCurrentRow();
+				int previousColumn = tetrisGame.getTetrisPieceCurrentColumn();
+
+				// testing tetris controls (left)
+				tetrisGame.moveTetrisPieceLeft();
+				tetrisGame.dropTetrisPiece();
+
+				// update the view
+				tetrisView.updateGridPosition(previousRow, previousColumn,
+						Color.BLACK, false);
+				tetrisView.updateGridPosition(
+						tetrisGame.getTetrisPieceCurrentRow(),
+						tetrisGame.getTetrisPieceCurrentColumn(),
+						getRandomColor(), true);
+			}
+		}
+	}
+	
+	private class MoveTetrisPieceRightButton implements OnClickListener {
+		@Override
+		public void onClick(View view) {
+			// checking if dropping piece collided with piece below it.
+			int tetrisRow = tetrisGame.getTetrisPieceCurrentRow() + 1;
+			int tetrisColumn = tetrisGame.getTetrisPieceCurrentColumn();
+
+			if (tetrisGame.hasReachedBottomEdge()
+					|| tetrisGame.hasCollided(tetrisRow, tetrisColumn)) {
+				
+				// Check if the row is filled.
+				if (tetrisGame.isBottomRowFilled()) {
+					tetrisGame.clearBottonRow();
+					tetrisGame.cascadeRowDown();
+					
+					updateView(false);
+				}
+				
+				tetrisGame.getNextPiece();
+
+				// simple test case
+				tetrisGame.setTetrisPieceToLocation(0, 5);
+
+				tetrisView.updateGridPosition(
+						tetrisGame.getTetrisPieceCurrentRow(),
+						tetrisGame.getTetrisPieceCurrentColumn(),
+						getRandomColor(), true);
+			} else {
+				int previousRow = tetrisGame.getTetrisPieceCurrentRow();
+				int previousColumn = tetrisGame.getTetrisPieceCurrentColumn();
+
+				// testing tetris controls (right)
+				tetrisGame.moveTetrisPieceRight();
+				tetrisGame.dropTetrisPiece();
+
+				// update the view
+				tetrisView.updateGridPosition(previousRow, previousColumn,
+						Color.BLACK, false);
+				tetrisView.updateGridPosition(
+						tetrisGame.getTetrisPieceCurrentRow(),
+						tetrisGame.getTetrisPieceCurrentColumn(),
+						getRandomColor(), true);
+			}
+		}
+	}
+	
+	private class DropButton implements OnClickListener {
+		@Override
+		public void onClick(View view) {
+			// checking if dropping piece collided with piece below it.
+			int tetrisRow = tetrisGame.getTetrisPieceCurrentRow() + 1;
+			int tetrisColumn = tetrisGame.getTetrisPieceCurrentColumn();
+
+			if (tetrisGame.hasReachedBottomEdge()
+					|| tetrisGame.hasCollided(tetrisRow, tetrisColumn)) {
+				tetrisGame.getNextPiece();
+
+				// Check if the row is filled.
+				if (tetrisGame.isBottomRowFilled()) {
+					tetrisGame.clearBottonRow();
+					tetrisGame.cascadeRowDown();
+					
+					updateView(false);
+				}
+				
+				// simple test case
+				tetrisGame.setTetrisPieceToLocation(0, 5);
+
+				tetrisView.updateGridPosition(
+						tetrisGame.getTetrisPieceCurrentRow(),
+						tetrisGame.getTetrisPieceCurrentColumn(),
+						getRandomColor(), true);
+			} else {
+				int previousRow = tetrisGame.getTetrisPieceCurrentRow();
+				int previousColumn = tetrisGame.getTetrisPieceCurrentColumn();
+
+				// testing tetris controls (drop)
+				tetrisGame.dropTetrisPiece();
+
+				// update the view
+				tetrisView.updateGridPosition(previousRow, previousColumn,
+						Color.BLACK, false);
+				tetrisView.updateGridPosition(
+						tetrisGame.getTetrisPieceCurrentRow(),
+						tetrisGame.getTetrisPieceCurrentColumn(),
+						getRandomColor(), true);
+			}
+		}
+	}
+	
+	private class RotateButton implements OnClickListener {
+		@Override
+		public void onClick(View view) {
+			tetrisGame.startGameWithBottomFilled();
+			updateView(true);
 		}
 	}
 }

@@ -97,6 +97,13 @@ public class TetrisView extends View {
 		}
 	}
 	
+	// test method - updates view by a single row with columns list
+	public void updateGridPosition(int row, int [] columns, int color, boolean filled) {
+		for (int column = 0; column < columns.length; column++) {
+			updateGridPosition(row, column, color, filled);
+		}
+	}
+	
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		initGridView(w, h);

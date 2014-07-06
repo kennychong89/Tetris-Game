@@ -6,4 +6,6 @@
     <string name="action_settings">Settings</string>
 	<string name="move_left_text">Left</string>
 	<string name="move_right_text">Right</string>
+	<string name="drop_down_text">Drop</string>
+	<string name="rotate_text">Rotate</string>
 </resources>

@@ -44,6 +44,41 @@ public class TetrisRules {
 		getNextPiece();
 		setTetrisPieceToLocation(0, 0);
 	}
+	
+	// Test method - initially fills the bottom row down with tetris pieces
+	// except for position (17,5). Used to test methods isRowCompleted(),
+	// clearRow(), cascadeDown().
+	public void startGameWithBottomFilled() {
+		getNextPiece();
+		
+		int bottomGridRow = tetrisGrid.getGridRows() - 1;
+		int bottomGridColumn = tetrisGrid.getGridColumns();
+		
+		for (int i = 0; i < bottomGridColumn; i++) {
+				if (i != bottomGridColumn / 2)
+					tetrisGrid.occupyPosition(bottomGridRow, i);
+		}
+		
+		setTetrisPieceToLocation(0, bottomGridColumn / 2);
+	}
+	
+	public int getRows() {
+		return tetrisGrid.getGridRows();
+	}
+	
+	public int getGridColumns() {
+		return tetrisGrid.getGridColumns();
+	}
+	
+	public boolean isColumnFilled(int row, int column) {
+		return !tetrisGrid.isEmpty(row, column);
+	}
+	
+	public void clearBottonRow() {
+		int bottomGridRow = tetrisGrid.getGridRows() - 1;
+		
+		tetrisGrid.clearRows(bottomGridRow);
+	}
 	/*
 	public void startGame() {
 		// generate game piece
@@ -106,6 +141,34 @@ public class TetrisRules {
 	
 	public boolean isGameOver() {
 		return false;
+	}
+	
+	// test method - checks if bottom row contains no empty spaces.
+	// Will expand this later to check different rows.
+	public boolean isBottomRowFilled() {
+		int bottomGridRow = tetrisGrid.getGridRows() - 1;
+		int bottomGridColumn = tetrisGrid.getGridColumns();
+		
+		for (int i = 0; i < bottomGridColumn; i++) {
+			if (tetrisGrid.isEmpty(bottomGridRow, i))
+				return false;
+		}
+			
+		return true;
+	}
+	
+	// test method - clears out the bottom row. 
+	// This method does not cascade down the rows above the bottom rows 
+	public void clearBottomRow() {
+		int bottomGridRow = tetrisGrid.getGridRows() - 1;
+		
+		tetrisGrid.clearRows(bottomGridRow);
+	}
+	
+	
+	// test method - cascades the rest of rows down only if bottom row has been cleared
+	public void cascadeRowDown() {
+		
 	}
 	
 	public boolean willCollide(int row, int column) {

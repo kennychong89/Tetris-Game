@@ -1,0 +1,9 @@
+UPDATED July 6th, 2014
+Additions
+-Added control buttons 'Left', 'Right','Drop','Rotate':
+	'Left' and 'Right' buttons move piece left and right; 
+	'Drop' drops piece;
+	'Rotate' fills bottom row (testing purposes).
+
+Changes
+-Bottom row will be cleared when it is filled 
