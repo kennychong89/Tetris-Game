@@ -21,6 +21,5 @@ A simple Tetris app for Android
   * Different game modes and starting game speeds
   * Music
 
-### Updated 6/29/2014
-* Added methods to move Tetris left or right when touching screen
-* Added left and right buttons on bottom of screen for testing purposes
+### Updated 7/06/2014
+* Please read update.log for changes
