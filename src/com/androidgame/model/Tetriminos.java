@@ -28,7 +28,7 @@ public class Tetriminos {
 	 * @param column
 	 * @param row
 	 */
-	public void updatePosition(int column, int row) {
+	public void updatePosition(int row, int column) {
 		piecePositions[0].setRow(row);
 		piecePositions[0].setColumn(column);
 	}

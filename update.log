@@ -6,4 +6,18 @@ Additions
 	'Rotate' fills bottom row (testing purposes).
 
 Changes
--Bottom row will be cleared when it is filled 
+-Bottom row will be cleared when it is filled
+
+UPDATE July 08, 2014
+Note: Refactored the source code.
+
+Additions
+-Added source files:
+ -GridManager.java
+ -TetrisPieceController.java
+ -TetrisPieceGenerator.java
+ -TetrisGame.java
+ -Actions.java
+
+Changes
+-Updated TetrisRules.java and MainActivity.java to work with the newly added files.

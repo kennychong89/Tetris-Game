@@ -3,6 +3,8 @@ package com.androidgame.model;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.graphics.Color;
+
 /**
  * Class will represent simplified rules for Tetris. Basically the rules are: 
  * 
@@ -23,109 +25,27 @@ import java.util.TimerTask;
  * @author kenny
  */
 public class TetrisRules {
+	// not sure if needed 
 	public static final int GRAVITY = 1000; // 1000 ms or 1 second
-	
-	private Grid tetrisGrid;
-	private Tetriminos currentPiece;
-
+	private GridManager gridManager;
+	private TetrisPieceGenerator pieceGenerator;
+	private TetrisPieceController pieceController;
 	//private boolean hasStarted;
 	
 	public TetrisRules() {
-		tetrisGrid = new Grid();
-		currentPiece = null;
-	}
-	
-	public TetrisRules(Grid tetrisGrid) {
-		this.tetrisGrid = tetrisGrid;
-		currentPiece = null;
-	}
-	
-	public void startGame() {
-		getNextPiece();
-		setTetrisPieceToLocation(0, 0);
+		gridManager = new GridManager();
+		pieceGenerator = new TetrisPieceGenerator();
+		pieceController = new TetrisPieceController(pieceGenerator.getCurrentPiece(), gridManager);
 	}
 	
 	// Test method - initially fills the bottom row down with tetris pieces
-	// except for position (17,5). Used to test methods isRowCompleted(),
-	// clearRow(), cascadeDown().
-	public void startGameWithBottomFilled() {
-		getNextPiece();
-		
-		int bottomGridRow = tetrisGrid.getGridRows() - 1;
-		int bottomGridColumn = tetrisGrid.getGridColumns();
-		
-		for (int i = 0; i < bottomGridColumn; i++) {
-				if (i != bottomGridColumn / 2)
-					tetrisGrid.occupyPosition(bottomGridRow, i);
-		}
-		
-		setTetrisPieceToLocation(0, bottomGridColumn / 2);
-	}
-	
-	public int getRows() {
-		return tetrisGrid.getGridRows();
-	}
-	
-	public int getGridColumns() {
-		return tetrisGrid.getGridColumns();
-	}
-	
-	public boolean isColumnFilled(int row, int column) {
-		return !tetrisGrid.isEmpty(row, column);
-	}
-	
-	public void clearBottonRow() {
-		int bottomGridRow = tetrisGrid.getGridRows() - 1;
-		
-		tetrisGrid.clearRows(bottomGridRow);
-	}
-	/*
+	// except for position (17,5). Used to test methods GridManager.isRowCompleted(),
+	// GridManager.clearRow(), GridManager.cascadeDown().
 	public void startGame() {
-		// generate game piece
-		currentPiece = getNextPiece();
-		
-		// place piece into top middle position of the grid.
-		currentPiece.updatePosition(tetrisGrid.getGridColumns() / 2, 0);
-		
-		// update tetris grid
-		tetrisGrid.occupyPosition(currentPiece.getRow(), currentPiece.getColumn());
-		
-		// drop the piece downward the grid determined by the gravity time
-		// create a new timer
-		Timer timer = new Timer();
-
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				// check for game over condition
-				if (isGameOver()) {
-					// end the game
-					endGame();
-				} else {
-					// check if dropping the piece down will cause a collision
-					if (willCollide(currentPiece.getRow() + 1, currentPiece.getColumn())) {
-						// if piece will collide, place the piece to position before collision
-						// set the grid position to occupy and move to the next piece
-						tetrisGrid.occupyPosition(currentPiece.getRow(), currentPiece.getColumn());
-						
-						currentPiece = getNextPiece();
-						currentPiece.updatePosition(tetrisGrid.getGridColumns() / 2, 0);
-						
-					} else {
-						// if piece has no collision, continue dropping down
-						// (will change depending on the piece but for now assume 1x1 piece will just on top of the piece 
-						// it was going to collide with)
-						currentPiece.updatePosition(currentPiece.getColumn(), currentPiece.getRow() + 1);
-					}	
-						
-					// check if the piece has reached the bottom of the grid 
-					    // if yes, we stop and and retrieve the next piece
-						// if no, move the piece down the grid rows
-				}
-			}
-		}, 0, GRAVITY);
-	}	
-	*/
+		// testing
+		//gridManager.fillGridBottom();
+		pieceController.setTetrisPieceToLocation(0, 5);
+	}
 	
 	public void pauseGame() {
 		
@@ -143,131 +63,60 @@ public class TetrisRules {
 		return false;
 	}
 	
-	// test method - checks if bottom row contains no empty spaces.
-	// Will expand this later to check different rows.
-	public boolean isBottomRowFilled() {
-		int bottomGridRow = tetrisGrid.getGridRows() - 1;
-		int bottomGridColumn = tetrisGrid.getGridColumns();
-		
-		for (int i = 0; i < bottomGridColumn; i++) {
-			if (tetrisGrid.isEmpty(bottomGridRow, i))
-				return false;
-		}
-			
-		return true;
+	public int getCurrentRow() {
+		return pieceController.getTetrisPieceCurrentRow();
 	}
 	
-	// test method - clears out the bottom row. 
-	// This method does not cascade down the rows above the bottom rows 
-	public void clearBottomRow() {
-		int bottomGridRow = tetrisGrid.getGridRows() - 1;
-		
-		tetrisGrid.clearRows(bottomGridRow);
+	public int getCurrentColumn() {
+		return pieceController.getTetrisPieceCurrentColumn();
 	}
 	
-	
-	// test method - cascades the rest of rows down only if bottom row has been cleared
-	public void cascadeRowDown() {
-		
+	public boolean hasPieceReachedBottomEdge() {
+		return pieceController.hasReachedBottomEdge();
 	}
 	
-	public boolean willCollide(int row, int column) {
-		// will change later. used only for testing.
-		return !tetrisGrid.isEmpty(row, column);
+	public boolean hasCollidedWithAnotherPiece() {
+		// checking if dropping piece collided with piece below it.
+		int tetrisRow = pieceController.getTetrisPieceCurrentRow() + 1;
+		int tetrisColumn = pieceController.getTetrisPieceCurrentColumn();
+
+		return pieceController.hasCollided(tetrisRow, tetrisColumn);
 	}
 	
 	public void getNextPiece() {
-		currentPiece = new Tetriminos();
+		pieceGenerator.createNextPiece();
+		pieceController.setCurrentTetrisPiece(pieceGenerator.getCurrentPiece());
+		pieceController.setTetrisPieceToLocation(0, 5);
 	}
 	
-	// test method
-	public void setTetrisPieceToLocation(int row, int column) {
-		if (currentPiece != null)
-			currentPiece.updatePosition(column, row);
+	// extend later
+	public boolean isBottomRowFilled() {
+		return gridManager.isBottomRowFilled();
 	}
 	
-	// test method
-	public void dropTetrisPiece() {
-
-		// retrieve current location of the piece
-		int row = currentPiece.getRow();
-		int column = currentPiece.getColumn();
-		
-		// drop the piece one row down on the grid unless it is at the bottom
-		if (!hasReachedBottomEdge() && !hasCollidedBelow()) {
-			tetrisGrid.unoccupyPosition(row, column);
-			tetrisGrid.occupyPosition(row + 1, column);
-			
-			// update tetris piece
-			currentPiece.updatePosition(column, row + 1);
+	public void clearBottomRow() {
+		gridManager.clearBottomRow();
+		gridManager.cascadeRowDown();
+	}
+	
+	public void performAction(Actions action) {
+		switch(action) {
+			case LEFT:
+				pieceController.moveTetrisPieceLeft();
+				break;
+			case RIGHT:
+				pieceController.moveTetrisPieceRight();
+				break;
+			case DROP:
+				pieceController.dropTetrisPiece();
+				break;
+			case ROTATE:
+				pieceController.rotateTetrisPiece();
+				break;
 		}
 	}
 	
-	// test method
-	public void moveTetrisPieceLeft() {
-		// retrieve the current location of the piece
-		int row = currentPiece.getRow();
-		int column = currentPiece.getColumn();
-		
-		// move the piece to the left on the grid unless it is touching the grid's left corner
-		if (!hasReachedLeftEdge() && !hasCollidedLeft()) {
-			tetrisGrid.unoccupyPosition(row, column);
-			tetrisGrid.occupyPosition(row, column - 1); 
-			
-			// update tetris piece
-			currentPiece.updatePosition(column - 1, row);
-		}
-	}
-	
-	// test method
-	public void moveTetrisPieceRight() {
-		// retrieve the current location of the piece
-		int row = currentPiece.getRow();
-		int column = currentPiece.getColumn();
-		
-		// move the piece to the right on the grid unless it is touching the grid's right corner
-		if (!hasReachedRightEdge() && !hasCollidedRight()) {
-			tetrisGrid.unoccupyPosition(row, column);
-			tetrisGrid.occupyPosition(row, column + 1);
-			
-			// update tetris piece
-			currentPiece.updatePosition(column + 1, row);
-		}
-	}
-	public int getTetrisPieceCurrentRow() {
-			return currentPiece.getRow();
-	}
-	
-	public int getTetrisPieceCurrentColumn() {
-			return currentPiece.getColumn();
-	}
-	
-	public boolean hasReachedBottomEdge() {
-		return currentPiece.getRow() == (tetrisGrid.getGridRows() - 1);
-	}
-	
-	public boolean hasReachedLeftEdge() {
-		return currentPiece.getColumn() == 0;
-	}
-	
-	public boolean hasReachedRightEdge() {
-		return currentPiece.getColumn() == (tetrisGrid.getGridColumns() - 1);
-	}
-	
-	// update for row, column argument.
-	public boolean hasCollided(int row, int column) {
-		return !tetrisGrid.isEmpty(row, column);
-	}
-	
-	public boolean hasCollidedBelow() {
-		return hasCollided(currentPiece.getRow() + 1, currentPiece.getColumn());
-	}
-	
-	public boolean hasCollidedLeft() {
-		return hasCollided(currentPiece.getRow(), currentPiece.getColumn() - 1);
-	}
-	
-	public boolean hasCollidedRight() {
-		return hasCollided(currentPiece.getRow(), currentPiece.getColumn() + 1);
+	public void dropPieceDown() {
+		pieceController.dropTetrisPiece();
 	}
 }
