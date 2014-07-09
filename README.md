@@ -21,5 +21,5 @@ A simple Tetris app for Android
   * Different game modes and starting game speeds
   * Music
 
-### Updated 7/06/2014
+### Updated 7/08/2014
 * Please read update.log for changes
