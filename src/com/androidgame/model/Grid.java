@@ -112,8 +112,8 @@ public class Grid {
 	 */
 	public void clearRows(int... rows) {
 		for (int i = 0; i < rows.length; i++) {
-			if (isValidPosition(rows[i], 0)) {
-				for (int column = 0; column < getGridColumns(); column++)
+			if (isValidPosition(rows[i], 1)) {
+				for (int column = 1; column <= DEFAULT_COLUMNS; column++)
 					unoccupyPosition(rows[i], column);
 			}
 		}
@@ -153,7 +153,7 @@ public class Grid {
 	/*
 	 * Testing purposes
 	 */
-	private void printGrid() {
+	public void printGrid() {
 		for (int row = 0; row < tetrisGrid.length; row++) {
 			for (int column = 0; column < tetrisGrid[0].length; column++) {
 				if (tetrisGrid[row][column] == true)

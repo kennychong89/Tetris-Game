@@ -46,7 +46,7 @@ public class TetrisRules {
 	public void startGame() {
 		// testing
 		//gridManager.fillGridBottom();
-		pieceController.setTetrisPieceToLocation(0, 5);
+		//pieceController.setTetrisPieceToLocation(0, 5);
 	}
 	
 	public void pauseGame() {
@@ -65,30 +65,49 @@ public class TetrisRules {
 		return false;
 	}
 	
-	public int getCurrentRow() {
-		return pieceController.getTetrisPieceCurrentRow();
+	public int[] getPieceRows() {
+		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
+		Block[] tetrisBlocks = currPiece.getPieceBlocks();
+		int [] rows = new int[tetrisBlocks.length];
+		
+		for (int i = 0; i < tetrisBlocks.length; i++) {
+			if (tetrisBlocks[i] != null) {
+				int blockRow = tetrisBlocks[i].getRow();
+			
+				rows[i] = blockRow;
+			}
+		}
+		
+		return rows;
 	}
 	
-	public int getCurrentColumn() {
-		return pieceController.getTetrisPieceCurrentColumn();
+	public int[] getPieceColumns() {
+		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
+		Block[] tetrisBlocks = currPiece.getPieceBlocks();
+		int [] columns = new int[tetrisBlocks.length];
+		
+		for (int i = 0; i < tetrisBlocks.length; i++) {
+			if (tetrisBlocks[i] != null) {
+				int blockColumn = tetrisBlocks[i].getColumn();
+			
+				columns[i] = blockColumn;
+			}
+		}
+		
+		return columns;
 	}
 	
-	public boolean hasPieceReachedBottomEdge() {
-		return pieceController.hasReachedBottomEdge();
-	}
-	
-	public boolean hasCollidedWithAnotherPiece() {
-		// checking if dropping piece collided with piece below it.
-		int tetrisRow = pieceController.getTetrisPieceCurrentRow() + 1;
-		int tetrisColumn = pieceController.getTetrisPieceCurrentColumn();
-
-		return pieceController.hasCollided(tetrisRow, tetrisColumn);
+	public boolean hasPieceCollided() {
+		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
+		
+		Block[] tetrisBlocks = currPiece.getPieceBlocks();
+		
+		return gridManager.hasCollidedBelow(tetrisBlocks);
 	}
 	
 	public void getNextPiece() {
 		pieceGenerator.createNextPiece();
 		pieceController.setCurrentTetrisPiece(pieceGenerator.getCurrentPiece());
-		pieceController.setTetrisPieceToLocation(0, 5);
 	}
 	
 	// extend later

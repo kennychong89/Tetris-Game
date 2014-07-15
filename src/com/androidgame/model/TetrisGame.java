@@ -25,16 +25,16 @@ public class TetrisGame {
 	}
 	
 	public void nextGameIteration(Actions action) {
-		if (tetrisRules.hasPieceReachedBottomEdge() || tetrisRules.hasCollidedWithAnotherPiece()) {
+		if (tetrisRules.hasPieceCollided()) {
 			
 			if (tetrisRules.isBottomRowFilled()) 
 				tetrisRules.clearBottomRow();
 			
 			tetrisRules.getNextPiece();
-			updateUI(tetrisRules.getCurrentRow(), tetrisRules.getCurrentColumn(), true);
+			updateUI(tetrisRules.getPieceRows(), tetrisRules.getPieceColumns(), true);
 		} else {
-			int previousRow = tetrisRules.getCurrentRow();
-			int previousColumn = tetrisRules.getCurrentColumn();
+			int [] previousPieceRows = tetrisRules.getPieceRows();
+			int [] previousPieceColumns = tetrisRules.getPieceColumns();
 			
 			// for testing only, user drops piece manually.
 			if (action != Actions.DROP) {
@@ -45,14 +45,21 @@ public class TetrisGame {
 				tetrisRules.dropPieceDown();
 			
 			// update UI, we want to clear current location of (row, column).
-			updateUI(previousRow, previousColumn, false);
+			updateUI(previousPieceRows, previousPieceColumns, false);
 			
 			// update UI, we want to render new location of (row, column).
-			updateUI(tetrisRules.getCurrentRow(), tetrisRules.getCurrentColumn(), true);
+			updateUI(tetrisRules.getPieceRows(), tetrisRules.getPieceColumns(), true);
 		}
 	}
 	
-	public void updateUI(int row, int column, boolean occupied) {
-		mainAct.updateView(row, column, occupied);
+	private void updateUI(int [] rows, int [] columns, boolean occupied) {
+		
+		// assume for now that rows and columns have equal length
+		for (int i = 0; i < rows.length; i++) {
+			int row = rows[i];
+			int column = columns[i];
+			
+			mainAct.updateView(row, column, occupied);
+		}
 	}
 }

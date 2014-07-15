@@ -42,7 +42,7 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 		tetrisGame = new TetrisGame(this);
 		
 		// change later
-		tetrisGame.startGame();
+		//tetrisGame.startGame();
 		
 		// testing bottom grid clearing
 		//tetrisGame.startGameWithBottomFilled();

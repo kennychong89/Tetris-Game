@@ -9,7 +9,7 @@ import com.androidgame.model.enums.TetrisPieceName;
  */
 public class TetrisPiece {
 	// holds blocks to represent the tetris piece
-	private TetrisBlock[] piece;
+	private Block[] piece;
 	
 	// starting coordinates 
 	private int startingRow = 0;
@@ -23,8 +23,8 @@ public class TetrisPiece {
 		this.startingRow = startingRow;
 		this.startingColumn = startingColumn;
 		
-		// assume most Tetris piece size is four
-		piece = new TetrisBlock[PIECE_SIZE];
+		// since we have single piece, block size is one.
+		piece = new Block[1];
 		
 		pieceName = TetrisPieceName.SINGLE_PIECE;
 		
@@ -39,51 +39,29 @@ public class TetrisPiece {
 		this.pieceName = pieceName;
 	}
 	
-	/**
-	 * Test case
-	 * @param column
-	 * @param row
-	 */
-	public void updatePiece(Actions action) {
-		switch (action) {
-			case LEFT:
-				// shift all columns by -1.
-				shiftPiece(-1);
-				break;
-			case RIGHT:
-				// shift all columns by +1.
-				shiftPiece(1);
-				break;
-			case ROTATE:
-				break;
-			case DROP:
-				// drop piece by -1.
-				dropPiece(-1);
-				break;
-		}
-		//piecePositions[0].setRow(row);
-		//piecePositions[0].setColumn(column);
+	public String getTetrisPieceName() {
+		return pieceName.name();
 	}
 	
-	public TetrisBlock[] getPieceBlocks() {
-		return createTetrisPieceCopy();
+	public Block[] getPieceBlocks() {
+		return piece;
 	}
 	
-	private TetrisBlock[] createTetrisPieceCopy() {
-		TetrisBlock[] copy = new TetrisBlock[piece.length];
+	private Block[] createTetrisPieceCopy() {
+		Block[] copy = new Block[piece.length];
 		
 		// returns copy of blocks.
 		for (int i = 0; i < piece.length; i++) {
-			TetrisBlock block = piece[i];
+			Block block = piece[i];
 			int row = block.getRow();
 			int column = block.getColumn();
 			
-			copy[i] = new TetrisBlock(row, column); 
+			copy[i] = new Block(row, column); 
 		}
 		
 		return copy;
 	}
-	
+
 	private void createPiece() {
 		switch (pieceName) {
 			case L_PIECE:
@@ -92,38 +70,8 @@ public class TetrisPiece {
 				break;
 			case SINGLE_PIECE:
 				// We will only use a single 1x1 piece
-				piece[0] = new TetrisBlock(startingRow, startingColumn);
+				piece[0] = new Block(startingRow, startingColumn);
 				break;
-		}
-	}
-
-	/*
-	 * shift piece left (negative) or right (positive). How much shifted depends on value.
-	 */
-	private void shiftPiece(int value) {
-		for (int i = 0; i < piece.length; i++) { 
-			TetrisBlock block = piece[i];
-			
-			if (block != null) {
-				int previousColumn = block.getColumn();
-				
-				block.setColumn(previousColumn + value);
-			}
-		}
-	}
-	
-	/*
-	 * drop piece down depending on value.
-	 */
-	private void dropPiece(int value) {
-		for (int i = 0; i < piece.length; i++) {
-			TetrisBlock block = piece[i];
-			
-			if (block != null) {
-				int previousRow = block.getRow();
-				
-				block.setRow(previousRow + value); 
-			}
 		}
 	}
 }
