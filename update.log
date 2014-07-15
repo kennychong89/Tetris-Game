@@ -20,4 +20,24 @@ Additions
  -Actions.java
 
 Changes
--Updated TetrisRules.java and MainActivity.java to work with the newly added files.
+-Updated
+ -TetrisRules.java 
+ -MainActivity.java
+
+UPDATE July 15th, 2014
+Note: Redesigned and refactored some of the source code. 
+
+Additions
+-Added source files:
+ -TetrisBlock.java
+ -TetrisPiece.java
+ -TetrisPieceName.java
+
+Changes
+-Updated
+ -MainActivity.java
+ -Grid.java
+ -GridManager.java
+ -TetrisGame.java
+ -TetrisPieceController.java
+ -TetrisPieceGenerators.java

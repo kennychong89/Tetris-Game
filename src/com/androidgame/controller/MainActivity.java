@@ -17,8 +17,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.androidgame.model.Actions;
 import com.androidgame.model.TetrisGame;
+import com.androidgame.model.enums.Actions;
 import com.androidgame.tetrisyy.R;
 import com.androidgame.view.TetrisView;
 

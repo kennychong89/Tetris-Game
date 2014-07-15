@@ -6,17 +6,17 @@ package com.androidgame.model;
  * @author kenny
  */
 public class TetrisPieceGenerator {
-	private Tetriminos currentPiece;
+	private TetrisPiece currentPiece;
 	
 	public TetrisPieceGenerator() {
-		currentPiece = new Tetriminos();
+		currentPiece = new TetrisPiece();
 	}
 	
 	public void createNextPiece() {
-		currentPiece = new Tetriminos();
+		currentPiece = new TetrisPiece();
 	}
 	
-	public Tetriminos getCurrentPiece() {
+	public TetrisPiece getCurrentPiece() {
 		return currentPiece;
 	}
 }

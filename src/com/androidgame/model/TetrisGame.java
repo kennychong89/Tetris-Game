@@ -1,6 +1,7 @@
 package com.androidgame.model;
 
 import com.androidgame.controller.MainActivity;
+import com.androidgame.model.enums.Actions;
 
 import android.app.Activity;
 

@@ -3,6 +3,8 @@ package com.androidgame.model;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.androidgame.model.enums.Actions;
+
 import android.graphics.Color;
 
 /**
