@@ -1,11 +1,8 @@
 package com.androidgame.model;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
 
 import com.androidgame.model.enums.Actions;
-
-import android.graphics.Color;
 
 /**
  * Class will represent simplified rules for Tetris. Basically the rules are: 
@@ -65,44 +62,22 @@ public class TetrisRules {
 		return false;
 	}
 	
-	public int[] getPieceRows() {
+	public ArrayList<Integer> getPieceRows() {
 		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
-		Block[] tetrisBlocks = currPiece.getPieceBlocks();
-		int [] rows = new int[tetrisBlocks.length];
 		
-		for (int i = 0; i < tetrisBlocks.length; i++) {
-			if (tetrisBlocks[i] != null) {
-				int blockRow = tetrisBlocks[i].getRow();
-			
-				rows[i] = blockRow;
-			}
-		}
-		
-		return rows;
+		return currPiece.getPieceRows();
 	}
 	
-	public int[] getPieceColumns() {
+	public ArrayList<Integer> getPieceColumns() {
 		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
-		Block[] tetrisBlocks = currPiece.getPieceBlocks();
-		int [] columns = new int[tetrisBlocks.length];
 		
-		for (int i = 0; i < tetrisBlocks.length; i++) {
-			if (tetrisBlocks[i] != null) {
-				int blockColumn = tetrisBlocks[i].getColumn();
-			
-				columns[i] = blockColumn;
-			}
-		}
-		
-		return columns;
+		return currPiece.getPieceColums();
 	}
 	
 	public boolean hasPieceCollided() {
 		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
-		
-		Block[] tetrisBlocks = currPiece.getPieceBlocks();
-		
-		return gridManager.hasCollidedBelow(tetrisBlocks);
+
+		return gridManager.hasCollidedBelow(currPiece);
 	}
 	
 	public void getNextPiece() {

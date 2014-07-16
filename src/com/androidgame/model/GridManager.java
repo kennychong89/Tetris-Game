@@ -1,5 +1,7 @@
 package com.androidgame.model;
 
+import java.util.ArrayList;
+
 /**
  * Class will maintain updates to the Tetris grid, including checking for
  * collisions, adding and removing blocks from the grid.
@@ -66,37 +68,39 @@ public class GridManager {
 
 	}
 
-	public void updateGrid(Block[] blocks, boolean fill) {
+	public void updateGrid(TetrisPiece piece, boolean fill) {
+		
 		// we're filling
 		if (fill)
-			fillMultipleGridLocations(blocks);
+			fillMultipleGridLocations(piece);
 		else
-			unFillMultipleGridLocations(blocks);
+			unFillMultipleGridLocations(piece);
 	}
 
-	public void updateGrid(Block block, boolean fill) {
-		if (fill)
-			fillSingleGridLocation(block);
-		else
-			unFillSingleGridLocation(block);
-	}
-
-	public boolean hasCollidedTop(Block[] blocks) {
+	public boolean hasCollidedTop(TetrisPiece piece) {
 		return false;
 	}
 
-	public boolean hasCollidedBelow(Block[] blocks) {
-		return hasCollided(DROP_ONE, 0, blocks);
+	public boolean hasCollidedBelow(TetrisPiece piece) {
+		ArrayList<Block> belowBlocks = piece.getBottomSideOfPiece();
+		
+		return hasCollided(DROP_ONE, 0, belowBlocks);
 	}
 
-	public boolean hasCollidedLeft(Block[] blocks) {
-		return hasCollided(0, MOVE_ONE_LEFT, blocks);
+	public boolean hasCollidedLeft(TetrisPiece piece) {
+		ArrayList<Block> leftBlocks = piece.getLeftSideOfPiece();
+		
+		return hasCollided(0, MOVE_ONE_LEFT, leftBlocks);
 	}
 
-	public boolean hasCollidedRight(Block[] blocks) {
-		return hasCollided(0, MOVE_ONE_RIGHT, blocks);
+	public boolean hasCollidedRight(TetrisPiece piece) {
+		
+		ArrayList<Block> rightBlocks = piece.getRightSideOfPiece();
+		
+		return hasCollided(0, MOVE_ONE_RIGHT, rightBlocks);
 	}
-
+    
+	/*
 	// TODO
 	public boolean hasCollidedBelow(Block block) {
 		return false;
@@ -116,16 +120,15 @@ public class GridManager {
 	public boolean hasCollidedRight(Block block) {
 		return false;
 	}
-
-	private boolean hasCollided(int rowChange, int columnChange,
-			Block[] blocks) {
-		for (int i = 0; i < blocks.length; i++) {
-			Block block = blocks[i];
-
+	*/
+	
+	private boolean hasCollided(int rowChange, int columnChange, ArrayList<Block> blocks) {
+		for (Block block : blocks) {
 			if (block != null) {
 				int blockRow = block.getRow();
 				int blockColumn = block.getColumn();
-
+				
+				// check to see if it is occupied and that the block is bottom part of the piece.
 				if (isOccupied(blockRow + rowChange, blockColumn + columnChange))
 					return true;
 			}
@@ -156,16 +159,16 @@ public class GridManager {
 		}
 	}
 
-	private void fillMultipleGridLocations(Block[] blocks) {
-		for (int i = 0; i < blocks.length; i++) {
-			Block block = blocks[i];
+	private void fillMultipleGridLocations(TetrisPiece piece) {
+		ArrayList<Block> blocks = piece.getEntirePiece();
+		for (Block block : blocks) {
 			fillSingleGridLocation(block);
 		}
 	}
 
-	private void unFillMultipleGridLocations(Block[] blocks) {
-		for (int i = 0; i < blocks.length; i++) {
-			Block block = blocks[i];
+	private void unFillMultipleGridLocations(TetrisPiece piece) {
+		ArrayList<Block> blocks = piece.getEntirePiece();
+		for (Block block : blocks) {
 			unFillSingleGridLocation(block);
 		}
 	}

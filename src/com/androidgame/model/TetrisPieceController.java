@@ -32,44 +32,44 @@ public class TetrisPieceController {
 	public void moveTetrisPieceLeft() {
 		// move the piece to the left on the grid unless it is touching the
 		// grid's left corner
-		if (!gridManager.hasCollidedLeft(currentPiece.getPieceBlocks())) {
+		if (!gridManager.hasCollidedLeft(currentPiece)) {
 			// clear previous piece
-			gridManager.updateGrid(currentPiece.getPieceBlocks(), false);
+			gridManager.updateGrid(currentPiece, false);
 
 			// move piece to the left
 			shiftPiece(MOVE_ONE_LEFT);
 
 			// update grid
-			gridManager.updateGrid(currentPiece.getPieceBlocks(), true);
+			gridManager.updateGrid(currentPiece, true);
 		}
 	}
 
 	public void moveTetrisPieceRight() {
 		// move the piece to the right on the grid unless it is touching the
 		// grid's right corner
-		if (!gridManager.hasCollidedRight(currentPiece.getPieceBlocks())) {
+		if (!gridManager.hasCollidedRight(currentPiece)) {
 			// clear previous piece
-			gridManager.updateGrid(currentPiece.getPieceBlocks(), false);
+			gridManager.updateGrid(currentPiece, false);
 
 			// move piece to the right
 			shiftPiece(MOVE_ONE_RIGHT);
 
 			// update tetris piece
-			gridManager.updateGrid(currentPiece.getPieceBlocks(), true);
+			gridManager.updateGrid(currentPiece, true);
 		}
 	}
 
 	public void dropTetrisPiece() {
 		// drop the piece one row down on the grid unless it is at the bottom
-		if (!gridManager.hasCollidedBelow(currentPiece.getPieceBlocks())) {
+		if (!gridManager.hasCollidedBelow(currentPiece)) {
 			// clear previous piece
-			gridManager.updateGrid(currentPiece.getPieceBlocks(), false);
+			gridManager.updateGrid(currentPiece, false);
 
 			// move piece down
 			dropPiece(DROP_ONE_DOWN);
 
 			// update tetris piece
-			gridManager.updateGrid(currentPiece.getPieceBlocks(), true);
+			gridManager.updateGrid(currentPiece, true);
 		}
 	}
 
@@ -78,34 +78,16 @@ public class TetrisPieceController {
 	 * on value
 	 */
 	private void shiftPiece(int value) {
-		Block[] blocks = currentPiece.getPieceBlocks();
-
-		for (int i = 0; i < blocks.length; i++) {
-			Block block = blocks[i];
-
-			if (block != null) {
-				int previousColumn = block.getColumn();
-
-				block.setColumn(previousColumn + value);
-			}
-		}
+		// no change in row, just column
+		currentPiece.update(0,value);
 	}
 
 	/*
 	 * drop piece down depending on value
 	 */
 	private void dropPiece(int value) {
-		Block[] blocks = currentPiece.getPieceBlocks();
-
-		for (int i = 0; i < blocks.length; i++) {
-			Block block = blocks[i];
-
-			if (block != null) {
-				int previousRow = block.getRow();
-
-				block.setRow(previousRow + value);
-			}
-		}
+		// no change in column, just row
+		currentPiece.update(value, 0);
 	}
 
 	/*

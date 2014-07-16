@@ -153,7 +153,7 @@ public class Grid {
 	/*
 	 * Testing purposes
 	 */
-	public void printGrid() {
+	private void printGrid() {
 		for (int row = 0; row < tetrisGrid.length; row++) {
 			for (int column = 0; column < tetrisGrid[0].length; column++) {
 				if (tetrisGrid[row][column] == true)

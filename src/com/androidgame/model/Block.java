@@ -10,7 +10,7 @@ public class Block {
 	
 	public Block() {
 		this.row = 0;
-		this.column = 0;
+	
 	}
 	
 	public Block(int row, int column) {

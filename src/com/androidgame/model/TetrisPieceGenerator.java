@@ -14,11 +14,11 @@ public class TetrisPieceGenerator {
 	
 	public TetrisPieceGenerator() {
 		// piece will initially start at (1,5)
-		currentPiece = new TetrisPiece(1,5);
+		currentPiece = new TetrisPiece(generateRandomPieceName(), 1,5);
 	}
 	
 	public void createNextPiece() {
-		currentPiece = new TetrisPiece(1,5);
+		currentPiece = new TetrisPiece(generateRandomPieceName(), 1,5);
 	}
 	
 	public TetrisPiece getCurrentPiece() {
