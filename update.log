@@ -41,3 +41,19 @@ Changes
  -TetrisGame.java
  -TetrisPieceController.java
  -TetrisPieceGenerators.java
+
+UPDATE July 16th, 2014
+Note: Game can now support multiple classic Tetris pieces.
+
+Changes
+-Updated
+ -Block.java
+ -Grid.java
+ -GridManager.java
+ -TetrisGame.java
+ -TetrisPiece.java
+ -TetrisPieceController.java
+ -TetrisPieceGenerator.java
+ -TetrisRules.java
+ -TetrisPieceName.java
+
