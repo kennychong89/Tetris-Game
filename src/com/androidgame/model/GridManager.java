@@ -160,6 +160,7 @@ public class GridManager {
 	}
 
 	private void fillMultipleGridLocations(TetrisPiece piece) {
+		// remember to put in check
 		ArrayList<Block> blocks = piece.getEntirePiece();
 		for (Block block : blocks) {
 			fillSingleGridLocation(block);
@@ -167,6 +168,7 @@ public class GridManager {
 	}
 
 	private void unFillMultipleGridLocations(TetrisPiece piece) {
+		// remember to put in check
 		ArrayList<Block> blocks = piece.getEntirePiece();
 		for (Block block : blocks) {
 			unFillSingleGridLocation(block);

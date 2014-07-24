@@ -1,4 +1,4 @@
-UPDATED July 06, 2014
+UPDATED July 6th, 2014
 Additions
 -Added control buttons 'Left', 'Right','Drop','Rotate':
 	'Left' and 'Right' buttons move piece left and right; 
@@ -8,7 +8,7 @@ Additions
 Changes
 -Bottom row will be cleared when it is filled
 
-UPDATE July 08, 2014
+UPDATE July 8th, 2014
 Note: Refactored the source code.
 
 Additions
@@ -57,3 +57,20 @@ Changes
  -TetrisRules.java
  -TetrisPieceName.java
 
+UPDATE July 24th, 2014
+Note: Tetris pieces can now rotate.
+
+Possible Bugs need to fixed:
+  - Tetris pieces can rotate, but not correctly
+  - Rotating a Tetris piece near grid boundaries may cause it to clip the boundaries
+
+Changes
+-Updated
+  -src/com/androidgame/controller/MainActivity.java
+  -src/com/androidgame/model/GridManager.java
+  -src/com/androidgame/model/TetrisGame.java
+  -src/com/androidgame/model/TetrisPiece.java
+  -src/com/androidgame/model/TetrisPieceController.java
+  -src/com/androidgame/model/TetrisPieceGenerator.java 
+
+ 

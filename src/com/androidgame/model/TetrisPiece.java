@@ -91,7 +91,7 @@ public class TetrisPiece {
 				
 				if (block != null) {
 					Block copy = createBlockCopy(block);
-					blocks.add(block);
+					blocks.add(copy);
 				}
 			}
 		}
@@ -108,7 +108,7 @@ public class TetrisPiece {
 			
 			if (block != null) {
 				Block copy = createBlockCopy(block);
-				leftBlocks.add(block);
+				leftBlocks.add(copy);
 			}
 		}
 		
@@ -125,7 +125,7 @@ public class TetrisPiece {
 			
 			if (block != null) {
 				Block copy = createBlockCopy(block);
-				rightBlocks.add(block);
+				rightBlocks.add(copy);
 			}
 		}
 		
@@ -142,7 +142,7 @@ public class TetrisPiece {
 			
 			if (block != null) {
 				Block copy = createBlockCopy(block);
-				bottomBlocks.add(block);
+				bottomBlocks.add(copy);
 			}
 		}
 		
@@ -179,6 +179,43 @@ public class TetrisPiece {
 				}
 			}
 		}
+	}
+	
+	public void rotate() {
+		int oldColumnLength = piece[0].length;
+		int oldRowLength = piece.length;
+		
+		Block [][] newPiece = new Block[oldColumnLength][oldRowLength];
+		
+		for (int row = 0; row < piece.length; row++) {
+			int newRow = piece[0].length - 1;
+			int newColumn = row;
+			for (int column = 0; column < piece[0].length; column++) {
+				//newPiece[newRow][newColumn] = piece[row][column];
+				
+				Block pieceBlock = piece[row][column];
+				
+				if (pieceBlock != null) {
+					// this is confusing.
+					newPiece[newRow][newColumn] =  createBlock(pieceBlock, row, column, newRow, newColumn);
+				}
+				newRow--;
+			}
+		}
+		
+		piece = newPiece;
+	}
+	
+	private Block createBlock(Block currBlock, int currPieceRow, int currPieceColumn, int rRow, int rColumn) {
+		int blockCol = currBlock.getColumn();
+		int blockRow = currBlock.getRow();
+		
+		int diffCol = blockCol - currPieceColumn;
+		int diffRow = blockRow - currPieceRow;
+		
+		Block block = new Block(rRow + diffRow, rColumn + diffCol);
+		
+		return block;
 	}
 	
 	private Block createBlockCopy(Block block) {

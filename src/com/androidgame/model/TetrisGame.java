@@ -41,7 +41,7 @@ public class TetrisGame {
 			if (action != Actions.DROP) {
 				// do something with control input
 				tetrisRules.performAction(action);
-				tetrisRules.dropPieceDown();
+				//tetrisRules.dropPieceDown();
 			} else
 				tetrisRules.dropPieceDown();
 			

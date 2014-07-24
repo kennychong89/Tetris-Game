@@ -169,8 +169,7 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 	private class RotateButton implements OnClickListener {
 		@Override
 		public void onClick(View view) {
-		
-			//updateView(true);
+			tetrisGame.nextGameIteration(Actions.ROTATE);
 		}
 	}
 }

@@ -94,6 +94,11 @@ public class TetrisPieceController {
 	 * rotate piece clock-wise
 	 */
 	public void rotateTetrisPiece() {
-
+		gridManager.updateGrid(currentPiece, false);
+		
+		currentPiece.rotate();
+		
+		// update tetris piece
+		gridManager.updateGrid(currentPiece, true);
 	}
 }
