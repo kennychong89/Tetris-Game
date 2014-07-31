@@ -1,5 +1,6 @@
 package com.androidgame.controller;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import android.graphics.Color;
@@ -15,14 +16,15 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.androidgame.model.TetrisGame;
+import com.androidgame.model.TetrisMain;
+import com.androidgame.model.TetrisUI_Listener;
 import com.androidgame.model.enums.Actions;
 import com.androidgame.tetrisyy.R;
 import com.androidgame.view.TetrisView;
 
-public class MainActivity extends ActionBarActivity implements OnTouchListener {
+public class MainActivity extends ActionBarActivity implements OnTouchListener, TetrisUI_Listener, ActionRegister {
 	
 	private TetrisGame tetrisGame;
 	private TetrisView tetrisView;
@@ -33,19 +35,14 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 	private Button rotateButton;
 	private Button dropButton;
 	
+	private ArrayList<ActionReciever> recievers;
+	private TetrisMain tetrisMain;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-		
-		tetrisGame = new TetrisGame(this);
-		
-		// change later
-		//tetrisGame.startGame();
-		
-		// testing bottom grid clearing
-		//tetrisGame.startGameWithBottomFilled();
 	
 		/*
 		if (savedInstanceState == null) {
@@ -53,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 		*/
+		recievers = new ArrayList<ActionReciever>();
 		
 		tetrisView = (TetrisView) findViewById(R.id.tetris_view);
 		tetrisView.setOnTouchListener(this);
@@ -68,6 +66,10 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 		rightMoveButton.setOnClickListener(new MoveTetrisPieceRightButton());
 		dropButton.setOnClickListener(new DropButton());
 		rotateButton.setOnClickListener(new RotateButton());
+		
+		tetrisMain = new TetrisMain();
+		//this.register(tetrisMain);
+		tetrisMain.register(this);
 	}
 
 	@Override
@@ -148,28 +150,58 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
 	private class MoveTetrisPieceLeftButton implements OnClickListener {
 		@Override
 		public void onClick(View view) {
-			tetrisGame.nextGameIteration(Actions.LEFT);
+			//notifyRecievers(Actions.LEFT);
+			tetrisMain.performAction(Actions.LEFT);
 		}
 	}
 	
 	private class MoveTetrisPieceRightButton implements OnClickListener {
 		@Override
 		public void onClick(View view) {
-			tetrisGame.nextGameIteration(Actions.RIGHT);
+			//notifyRecievers(Actions.RIGHT);
+			tetrisMain.performAction(Actions.RIGHT);
 		}
 	}
 	
 	private class DropButton implements OnClickListener {
 		@Override
 		public void onClick(View view) {
-			tetrisGame.nextGameIteration(Actions.DROP);
+			//notifyRecievers(Actions.DROP);
+			tetrisMain.performAction(Actions.DROP);
 		}
 	}
 	
 	private class RotateButton implements OnClickListener {
 		@Override
 		public void onClick(View view) {
-			tetrisGame.nextGameIteration(Actions.ROTATE);
+			//notifyRecievers(Actions.ROTATE);
+			tetrisMain.performAction(Actions.ROTATE);
+		}
+	}
+
+	@Override
+	public void updateUI(int row, int column, boolean filled) {
+		if (filled) 
+			tetrisView.updateGridPosition(row, column, getRandomColor(), filled);
+		else 
+			tetrisView.updateGridPosition(row, column, Color.BLACK, filled);
+	}
+
+	@Override
+	public void register(ActionReciever registerReciever) {
+		recievers.add(registerReciever);
+	}
+
+	@Override
+	public void unregister(ActionReciever removeReciever) {
+		int recieverIndex = recievers.indexOf(removeReciever);
+		recievers.remove(recieverIndex);
+	}
+
+	@Override
+	public void notifyRecievers(Actions action) {
+		for (ActionReciever reciever : recievers) {
+			reciever.performAction(action);
 		}
 	}
 }

@@ -73,4 +73,38 @@ Changes
   -src/com/androidgame/model/TetrisPieceController.java
   -src/com/androidgame/model/TetrisPieceGenerator.java 
 
- 
+UPDATE July 31st, 2014
+Note: Fixed Tetris rotation. Refactored majority of source code.
+
+Changes
+-Updated
+  -src/com/androidgame/controller/MainActivity.java
+  -src/com/androidgame/model/tetrisgrid/GridManager.java
+  -src/com/androidgame/model/TetrisGame.java
+  -src/com/androidgame/model/TetrisRules.java
+  -src/com/androidgame/model/tetrispiece/TetrisPiece.java
+  -src/com/androidgame/model/TetrisPieceController.java
+  -src/com/androidgame/model/TetrisPieceGenerator.java
+-Added
+  -Several new packages:
+   -src/com/androidgame/model/tetrispiece_utilities/
+   -src/com/androidgame/model/tetrisgrid/ 
+   -src/com/androidgame/model/tetrispiece/
+  
+  -Several new classes:
+   -Blocks_Modifier.java
+   -TetrisPiece_Displayer.java
+   -UIRegister.java
+   -TetrisUI_Listener.java
+   -ActionReciever.java
+   -ActionRegister.java
+   
+  Broke TetrisPiece.java into several subclasses:
+   -L_Piece.java
+   -Rev_L_Piece.java
+   -Box_Piece.java
+   -Single_Piece.java
+   -S_Piece.java
+   -Rev_S_Piece.java
+   -Straight_Piece.java
+   -T_Piece.java

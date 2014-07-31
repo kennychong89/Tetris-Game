@@ -3,6 +3,10 @@ package com.androidgame.model;
 import java.util.ArrayList;
 
 import com.androidgame.model.enums.Actions;
+import com.androidgame.model.tetrisgrid.GridManager;
+import com.androidgame.model.tetrispiece.Block;
+import com.androidgame.model.tetrispiece.TetrisPiece;
+import com.androidgame.model.tetrispiece_utilities.Blocks_Modifier;
 
 /**
  * Class will represent simplified rules for Tetris. Basically the rules are: 
@@ -28,13 +32,17 @@ public class TetrisRules {
 	public static final int GRAVITY = 1000; // 1000 ms or 1 second
 	private GridManager gridManager;
 	private TetrisPieceGenerator pieceGenerator;
-	private TetrisPieceController pieceController;
+	private TetrisPiece_Controller pieceController;
+	private TetrisPiece piece;
+	
 	//private boolean hasStarted;
 	
 	public TetrisRules() {
 		gridManager = new GridManager();
 		pieceGenerator = new TetrisPieceGenerator();
-		pieceController = new TetrisPieceController(pieceGenerator.getCurrentPiece(), gridManager);
+		
+		piece = pieceGenerator.getRandomPiece();
+		pieceController = new TetrisPiece_Controller(piece, gridManager);
 	}
 	
 	// Test method - initially fills the bottom row down with tetris pieces
@@ -46,43 +54,25 @@ public class TetrisRules {
 		//pieceController.setTetrisPieceToLocation(0, 5);
 	}
 	
-	public void pauseGame() {
-		
-	}
-	
-	public void resetGame() {
-		
-	}
-	
-	public void endGame() {
-		
-	}
-	
 	public boolean isGameOver() {
 		return false;
 	}
 	
 	public ArrayList<Integer> getPieceRows() {
-		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
-		
-		return currPiece.getPieceRows();
+		return Blocks_Modifier.getRows(piece.getBlocks());
 	}
 	
 	public ArrayList<Integer> getPieceColumns() {
-		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
-		
-		return currPiece.getPieceColums();
+		return Blocks_Modifier.getColumns(piece.getBlocks());
 	}
 	
 	public boolean hasPieceCollided() {
-		TetrisPiece currPiece = pieceGenerator.getCurrentPiece();
-
-		return gridManager.hasCollidedBelow(currPiece);
+		return gridManager.hasCollidedBelow(piece.getBlocks());
 	}
 	
 	public void getNextPiece() {
-		pieceGenerator.createNextPiece();
-		pieceController.setCurrentTetrisPiece(pieceGenerator.getCurrentPiece());
+		piece = pieceGenerator.getRandomPiece();
+		pieceController.setCurrentTetrisPiece(piece);
 	}
 	
 	// extend later

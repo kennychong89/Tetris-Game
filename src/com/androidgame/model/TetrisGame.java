@@ -11,17 +11,16 @@ import com.androidgame.model.enums.Actions;
  * @author kenny
  */
 public class TetrisGame {
-	private MainActivity mainAct;
 	private TetrisRules tetrisRules;
+	private TetrisMain main;
 	
-	// Update to include whatever activity
-	public TetrisGame(MainActivity mainActivity) {
-		this.mainAct = mainActivity;
+	public TetrisGame(TetrisMain main) {
 		this.tetrisRules = new TetrisRules();
+		this.main = main;
 	}
 	
 	public void startGame() {
-		tetrisRules.startGame();
+	
 	}
 	
 	public void nextGameIteration(Actions action) {
@@ -32,7 +31,7 @@ public class TetrisGame {
 				//tetrisRules.clearBottomRow();
 			}
 				tetrisRules.getNextPiece();
-				updateUI(tetrisRules.getPieceRows(), tetrisRules.getPieceColumns(), true);
+				main.update(tetrisRules.getPieceRows(), tetrisRules.getPieceColumns(), true);
 		} else {
 			ArrayList<Integer> previousPieceRows = tetrisRules.getPieceRows();
 			ArrayList<Integer> previousPieceColumns = tetrisRules.getPieceColumns();
@@ -45,14 +44,15 @@ public class TetrisGame {
 			} else
 				tetrisRules.dropPieceDown();
 			
-			// update UI, we want to clear current location of (row, column).
-			updateUI(previousPieceRows, previousPieceColumns, false);
+				// update UI, we want to clear current location of (row, column).
+				main.update(previousPieceRows, previousPieceColumns, false);
 			
-			// update UI, we want to render new location of (row, column).
-			updateUI(tetrisRules.getPieceRows(), tetrisRules.getPieceColumns(), true);
+				// update UI, we want to render new location of (row, column).
+				main.update(tetrisRules.getPieceRows(), tetrisRules.getPieceColumns(), true);
 		}
 	}
 	
+	/*
 	private void updateUI(ArrayList<Integer> rows, ArrayList<Integer> columns, boolean occupied) {
 		
 		// assume for now that rows and columns have equal length
@@ -67,4 +67,5 @@ public class TetrisGame {
 			mainAct.updateView(row, column, occupied);
 		}
 	}
+	*/
 }
