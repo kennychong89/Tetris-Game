@@ -17,14 +17,14 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.androidgame.model.Observer;
 import com.androidgame.model.TetrisGame;
-import com.androidgame.model.TetrisMain;
-import com.androidgame.model.TetrisUI_Listener;
 import com.androidgame.model.enums.Actions;
+import com.androidgame.model.tetrispiece.Block;
 import com.androidgame.tetrisyy.R;
 import com.androidgame.view.TetrisView;
 
-public class MainActivity extends ActionBarActivity implements OnTouchListener, TetrisUI_Listener, ActionRegister {
+public class MainActivity extends ActionBarActivity implements OnTouchListener, Observer {
 	
 	private TetrisGame tetrisGame;
 	private TetrisView tetrisView;
@@ -35,8 +35,8 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener, 
 	private Button rotateButton;
 	private Button dropButton;
 	
-	private ArrayList<ActionReciever> recievers;
-	private TetrisMain tetrisMain;
+	//private TetrisMain tetrisMain;
+	private TetrisGame game;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,6 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener, 
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 		*/
-		recievers = new ArrayList<ActionReciever>();
 		
 		tetrisView = (TetrisView) findViewById(R.id.tetris_view);
 		tetrisView.setOnTouchListener(this);
@@ -67,11 +66,37 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener, 
 		dropButton.setOnClickListener(new DropButton());
 		rotateButton.setOnClickListener(new RotateButton());
 		
-		tetrisMain = new TetrisMain();
+		game = new TetrisGame();
+		//tetrisMain = new TetrisMain();
 		//this.register(tetrisMain);
-		tetrisMain.register(this);
+		//tetrisMain.register(this);
+		//game.register(this);
 	}
-
+	
+	public void startGameLoop() {
+		if (!game.hasStarted()) 
+			game.startGame();
+		else {
+			// piece either collided with another piece or has reached bottom
+			if (game.hasCollision()) {
+				// some check to see if there are any filled rows.
+				// then perform a collapse on the grid.
+				
+				// do next iteration
+				game.performNextIteration();
+			} else {
+				Actions userAction = game.getCurrentAction();
+				
+				// testing, maybe something
+				game.performAction(userAction);
+			 
+				
+			}
+		}
+		
+		//return game.getPieceData();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -151,7 +176,8 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener, 
 		@Override
 		public void onClick(View view) {
 			//notifyRecievers(Actions.LEFT);
-			tetrisMain.performAction(Actions.LEFT);
+			//tetrisMain.performAction(Actions.LEFT);
+			//game.nextGameIteration(Actions.LEFT);
 		}
 	}
 	
@@ -159,7 +185,8 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener, 
 		@Override
 		public void onClick(View view) {
 			//notifyRecievers(Actions.RIGHT);
-			tetrisMain.performAction(Actions.RIGHT);
+			//tetrisMain.performAction(Actions.RIGHT);
+			//game.nextGameIteration(Actions.RIGHT);
 		}
 	}
 	
@@ -167,7 +194,8 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener, 
 		@Override
 		public void onClick(View view) {
 			//notifyRecievers(Actions.DROP);
-			tetrisMain.performAction(Actions.DROP);
+			//tetrisMain.performAction(Actions.DROP);
+			//game.nextGameIteration(Actions.DROP);
 		}
 	}
 	
@@ -175,33 +203,17 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener, 
 		@Override
 		public void onClick(View view) {
 			//notifyRecievers(Actions.ROTATE);
-			tetrisMain.performAction(Actions.ROTATE);
+			//tetrisMain.performAction(Actions.ROTATE);
+			//game.nextGameIteration(Actions.ROTATE);
 		}
 	}
 
 	@Override
-	public void updateUI(int row, int column, boolean filled) {
+	public void update(ArrayList<Integer> rows, ArrayList<Integer> columns,
+			boolean filled) {
 		if (filled) 
-			tetrisView.updateGridPosition(row, column, getRandomColor(), filled);
+			tetrisView.updateGridPosition(rows, columns, getRandomColor(), filled);
 		else 
-			tetrisView.updateGridPosition(row, column, Color.BLACK, filled);
-	}
-
-	@Override
-	public void register(ActionReciever registerReciever) {
-		recievers.add(registerReciever);
-	}
-
-	@Override
-	public void unregister(ActionReciever removeReciever) {
-		int recieverIndex = recievers.indexOf(removeReciever);
-		recievers.remove(recieverIndex);
-	}
-
-	@Override
-	public void notifyRecievers(Actions action) {
-		for (ActionReciever reciever : recievers) {
-			reciever.performAction(action);
-		}
+			tetrisView.updateGridPosition(rows, columns, Color.BLACK, filled);
 	}
 }

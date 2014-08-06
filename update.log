@@ -108,3 +108,22 @@ Changes
    -Rev_S_Piece.java
    -Straight_Piece.java
    -T_Piece.java
+
+UPDATE August 5th, 2014
+Note: Fixed minor issues with Tetris rotation.
+
+Issues need to be fixed:
+  -Need to create a seperate thread to handle game loop
+
+Changes
+-Updated
+ -src/com/androidgame/controller/MainActivity.java
+ -src/com/androidgame/model/TetrisGame.java
+ -src/com/androidgame/model/TetrisPieceGenerator.java
+ -src/com/androidgame/model/TetrisPiece_Controller.java
+ -src/com/androidgame/model/TetrisRules.java
+ -src/com/androidgame/model/tetrisgrid/Grid.java
+ -src/com/androidgame/model/tetrisgrid/GridManager.java
+ -src/com/androidgame/model/tetrispiece_utilities/Blocks_Modifier.java
+ -src/com/androidgame/model/tetrispiece_utilities/TetrisPiece_Displayer.java
+ -src/com/androidgame/view/TetrisView.java

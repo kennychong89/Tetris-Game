@@ -1,6 +1,7 @@
 package com.androidgame.model;
 
 import com.androidgame.model.tetrisgrid.GridManager;
+import com.androidgame.model.tetrispiece.Block;
 import com.androidgame.model.tetrispiece.TetrisPiece;
 import com.androidgame.model.tetrispiece_utilities.Blocks_Modifier;
 
@@ -31,6 +32,12 @@ public class TetrisPiece_Controller {
 		this.currentPiece = currentPiece;
 	}
 
+	public void placeCurrentTetrisPieceAt(int row, int column) {
+		gridManager.updateGrid(currentPiece.getBlocks(), false);
+		placePiece(row, column);
+		gridManager.updateGrid(currentPiece.getBlocks(), true);
+	}
+	
 	public void moveTetrisPieceLeft() {
 		// move the piece to the left on the grid unless it is touching the
 		// grid's left corner
@@ -94,14 +101,33 @@ public class TetrisPiece_Controller {
 	}
 
 	/*
+	 * place the piece at (row, columN)
+	 */
+	private void placePiece(int row, int column) {
+		Blocks_Modifier.update(currentPiece.getBlocks(), row, column);
+	}
+	
+	/*
 	 * rotate piece counter clock-wise
 	 */
 	public void rotateTetrisPiece() {
-		gridManager.updateGrid(currentPiece.getBlocks(), false);
+		Block [] blocks = currentPiece.getBlocks();
 		
-		Blocks_Modifier.rotateCounterClockWise(currentPiece.getBlocks());
+		// clear grid
+		gridManager.updateGrid(blocks, false);
 		
-		// update tetris piece
-		gridManager.updateGrid(currentPiece.getBlocks(), true);
+		// attempt a counter clockwise rotation.
+		Blocks_Modifier.rotateCounterClockWise(blocks);
+		
+		// check if piece has collided
+		if (!gridManager.hasCollidedTop(blocks) && !gridManager.hasCollidedBelow(blocks)) {
+			// update tetris piece
+			gridManager.updateGrid(blocks, true);
+		} else {	
+			// rotate back to original form
+			Blocks_Modifier.rotateClockWise(blocks);
+			
+			gridManager.updateGrid(currentPiece.getBlocks(), true);
+		}
 	}
 }

@@ -2,6 +2,8 @@ package com.androidgame.model.tetrispiece_utilities;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import com.androidgame.model.tetrispiece.Block;
 
 public class Blocks_Modifier {
@@ -41,15 +43,30 @@ public class Blocks_Modifier {
 	}
 	
 	public static void rotateClockWise(Block [] blocks) {
+		// rotation matrix (clockwise)
+		int[][] rotationMatrix = { { 0, 1 }, 
+								   { -1, 0 } };
 		
+		// we need the pivot, assume that pivot is at (0,0) for now.
+		Block pivotBlock = blocks[0];
+
+		if (pivotBlock != null) {
+			int[] pivotVector = { pivotBlock.getRow(), pivotBlock.getColumn() };
+
+			performTransformation(blocks, pivotVector, rotationMatrix);
+		}
 	}
 	
 	public static ArrayList<Integer> getRows(Block [] blocks) {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		
-		for (Block block : blocks) {
-			int blockRow = block.getRow();
-			list.add(blockRow);
+		try {
+			for (Block block : blocks) {
+				int blockRow = block.getRow();
+				list.add(blockRow);
+			}
+		} catch (NullPointerException e) {
+				Log.d("yxx", "Block is null");
 		}
 		
 		return list;
@@ -64,6 +81,67 @@ public class Blocks_Modifier {
 		}
 		
 		return list;
+	}
+	
+	public static int getBottomLocationOfBlocks(Block[] blocks) {
+		// perform some checks.
+		int row = blocks[0].getRow();
+
+		for (int i = 1; i < blocks.length; i++) {
+			int currBlockRow = blocks[i].getRow();
+
+			if (currBlockRow > row)
+				row = currBlockRow;
+		}
+		return row;
+	}
+		
+	public static int getTopLocationOfBlocks(Block[] blocks) {
+		int row = blocks[0].getRow();
+
+		for (int i = 1; i < blocks.length; i++) {
+			int currBlockRow = blocks[i].getRow();
+
+			if (currBlockRow < row)
+				row = currBlockRow;
+		}
+		return row;
+	}
+		
+	public static int getLeftLocationOfBlocks(Block[] blocks) {
+		int column = blocks[0].getColumn();
+
+		for (int i = 1; i < blocks.length; i++) {
+			int currBlockColumn = blocks[i].getColumn();
+
+			if (currBlockColumn < column)
+				column = currBlockColumn;
+		}
+		return column;
+	}
+		
+	public static int getRightLocationOfBlocks(Block[] blocks) {
+		int column = blocks[0].getColumn();
+
+		for (int i = 1; i < blocks.length; i++) {
+			int currBlockColumn = blocks[i].getColumn();
+
+			if (currBlockColumn > column)
+				column = currBlockColumn;
+		}
+		return column;
+	}
+	
+	public static boolean checkBlockExists(Block [] blocks, int checkBlockRow, int checkBlockColumn) {
+		for (Block currBlock : blocks) {
+			int currBlockRow = currBlock.getRow();
+			int currBlockColumn = currBlock.getColumn();
+			
+			if ((currBlockRow == checkBlockRow) && (currBlockColumn == checkBlockColumn))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	private static void performTransformation(Block[] blocks, int[] pivotVector,

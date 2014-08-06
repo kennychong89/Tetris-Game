@@ -1,9 +1,9 @@
 package com.androidgame.model;
 
-import java.util.ArrayList;
-
-import com.androidgame.controller.MainActivity;
 import com.androidgame.model.enums.Actions;
+import com.androidgame.model.tetrisgrid.GridManager;
+import com.androidgame.model.tetrispiece.Block;
+import com.androidgame.model.tetrispiece.TetrisPiece;
 
 /**
  * Collaborates between TetrisRules and Activity.
@@ -11,61 +11,118 @@ import com.androidgame.model.enums.Actions;
  * @author kenny
  */
 public class TetrisGame {
-	private TetrisRules tetrisRules;
-	private TetrisMain main;
+	private GridManager gridManager;
+	private TetrisPieceGenerator pieceGenerator;
+	private TetrisPiece_Controller pieceController;
+	private TetrisPiece currentPiece;
+	private boolean hasStarted;
+	private Actions currentAction;
 	
-	public TetrisGame(TetrisMain main) {
-		this.tetrisRules = new TetrisRules();
-		this.main = main;
+	public TetrisGame() {
+		gridManager = new GridManager();
+		pieceGenerator = new TetrisPieceGenerator();
+		
+		currentPiece = pieceGenerator.getRandomPiece();
+		pieceController = new TetrisPiece_Controller(currentPiece, gridManager);
+		
+		hasStarted = false;
+		// no action yet.
+		currentAction = null;
+	}
+	
+	public boolean[][] startGameLoop() {
+		if (!hasStarted())
+			startGame();
+		else {
+			// piece either collided with another piece or has reached bottom
+			if (hasCollision()) {
+				// some check to see if there are any filled rows.
+				// then perform a collapse on the grid
+				
+				// do next iteration.
+				performNextIteration();
+			} else {
+				// retrieve action.
+				Actions userAction = getCurrentAction();
+				
+				// perform the action
+				performAction(userAction);
+			}
+		}
+	
+		return gridManager.getGridInfo();
+	}
+	
+	public boolean hasStarted() {
+		return hasStarted;
+	}
+	
+	public void setStart(boolean val) {
+		hasStarted = val;
+	}
+	
+	public boolean hasPerformedAction() {
+		return currentAction != null;
+	}
+	
+	public Actions getCurrentAction() {
+		return currentAction;
 	}
 	
 	public void startGame() {
-	
-	}
-	
-	public void nextGameIteration(Actions action) {
-		if (tetrisRules.hasPieceCollided()) {
-			
-			if (tetrisRules.isBottomRowFilled()) {
-				// fix later
-				//tetrisRules.clearBottomRow();
-			}
-				tetrisRules.getNextPiece();
-				main.update(tetrisRules.getPieceRows(), tetrisRules.getPieceColumns(), true);
-		} else {
-			ArrayList<Integer> previousPieceRows = tetrisRules.getPieceRows();
-			ArrayList<Integer> previousPieceColumns = tetrisRules.getPieceColumns();
-			
-			// for testing only, user drops piece manually.
-			if (action != Actions.DROP) {
-				// do something with control input
-				tetrisRules.performAction(action);
-				//tetrisRules.dropPieceDown();
-			} else
-				tetrisRules.dropPieceDown();
-			
-				// update UI, we want to clear current location of (row, column).
-				main.update(previousPieceRows, previousPieceColumns, false);
-			
-				// update UI, we want to render new location of (row, column).
-				main.update(tetrisRules.getPieceRows(), tetrisRules.getPieceColumns(), true);
-		}
-	}
-	
-	/*
-	private void updateUI(ArrayList<Integer> rows, ArrayList<Integer> columns, boolean occupied) {
+		hasStarted = true;
 		
-		// assume for now that rows and columns have equal length
-		for (int i = 0; i < rows.size(); i++) {
-			
-			// rows[i] - 1 since tetris piece is working with a grid with left, right, bottom boundaries [1..GRID_ROW - 1], [1..GRID_COLUMN - 1],
-			// whereas the UI grid us [0..ROW],[0..COLUMN].
-			// fix this in the future.
-			int row = rows.get(i) - 1;
-			int column = columns.get(i) - 1;
-			
-			mainAct.updateView(row, column, occupied);
+		// reset grid
+		gridManager.clearGrid();
+		
+		// generate random piece
+		currentPiece = pieceGenerator.getRandomPiece();
+		
+		// set pieceController to currentPiece 
+		pieceController.setCurrentTetrisPiece(currentPiece);
+		
+		pieceController.placeCurrentTetrisPieceAt(2, 2);
+		
+		// other stuff like clearing levels and score.
+	}
+
+	// this should be an interface
+	public void performAction(Actions action) {
+		switch(action) {
+			case LEFT:
+				pieceController.moveTetrisPieceLeft();
+				break;
+			case RIGHT:
+				pieceController.moveTetrisPieceRight();
+				break;
+			case DROP:
+				pieceController.dropTetrisPiece();
+				break;
+			case ROTATE:
+				pieceController.rotateTetrisPiece();
+				break;
 		}
 	}
-	*/
+	
+	// get copy of data of grid for reference.
+	public boolean[][] getPieceData() {
+		return gridManager.getGridInfo();
+	}
+	
+	public boolean hasCollision() {
+		return hasCollided();
+	}
+	
+	public boolean checkPieceHasReachedBottom() {
+		return hasCollided();
+	}
+	
+	public void performNextIteration() {
+		currentPiece = pieceGenerator.getRandomPiece();
+		pieceController.setCurrentTetrisPiece(currentPiece);
+	}
+	
+	private boolean hasCollided() {
+		return gridManager.hasCollidedBelow(currentPiece.getBlocks());
+	}
 }

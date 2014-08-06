@@ -1,9 +1,7 @@
 package com.androidgame.model.tetrisgrid;
 
-import java.util.ArrayList;
-
 import com.androidgame.model.tetrispiece.Block;
-import com.androidgame.model.tetrispiece.TetrisPiece;
+import com.androidgame.model.tetrispiece_utilities.Blocks_Modifier;
 
 /**
  * Class will maintain updates to the Tetris grid, including checking for
@@ -15,6 +13,7 @@ public class GridManager {
 	private Grid tetrisGrid;
 
 	// constants
+	private final int UP_ONE = -1;
 	private final int DROP_ONE = 1;
 	private final int MOVE_ONE_LEFT = -1;
 	private final int MOVE_ONE_RIGHT = 1;
@@ -27,7 +26,7 @@ public class GridManager {
 	 * WILL NOT BE USED, FOR NOW public GridManager(TetrisPiece piece, int rows,
 	 * int columns) { this(piece); tetrisGrid = new Grid(rows, columns); }
 	 */
-
+	/*
 	// this will be used only for testing
 	public void fillGridBottom() {
 		// getNextPiece();
@@ -64,7 +63,8 @@ public class GridManager {
 
 		return true;
 	}
-
+	*/
+	
 	// test method - cascades the rest of rows down only if bottom row has been
 	// cleared
 	public void cascadeRowDown() {
@@ -78,60 +78,82 @@ public class GridManager {
 		else
 			unFillMultipleGridLocations(blocks);
 	}
-
-	public boolean hasCollidedTop(int pieceTopSide) {
-		return false;
+	
+	public boolean hasCollided(Block [] blocks) {
+		return hasCollidedBelow(blocks) 
+				|| hasCollidedLeft(blocks)
+				|| hasCollidedRight(blocks)
+				|| hasCollidedTop(blocks);
+	}
+	
+	public boolean hasCollidedTop(Block [] blocks) {
+		return hasCollidedRow(blocks, UP_ONE);
 	}
 
 	public boolean hasCollidedBelow(Block [] blocks) {
-		int leftSide = getLeftLocationOfBlocks(blocks);
-		int rightSide = getRightLocationOfBlocks(blocks);
-		int bottomSide = getBottomLocationOfBlocks(blocks);
-		
-		for (int i = leftSide; i <= rightSide; i++) {
-			if (isOccupied(bottomSide + DROP_ONE, i))
-				return true;
-		}
-		
-		return false;
+		return hasCollidedRow(blocks, DROP_ONE);
 	}
-
+	
 	public boolean hasCollidedLeft(Block [] blocks) {
-		int leftSide = getLeftLocationOfBlocks(blocks);
-		int topSide = getTopLocationOfBlocks(blocks);
-		int bottomSide = getBottomLocationOfBlocks(blocks);
-		
-		for (int i = topSide; i <= bottomSide; i++) {
-			if (isOccupied(i, leftSide + MOVE_ONE_LEFT))
-				return true;
-		}
-		
-		return false;
+		return hasCollidedColumn(blocks, MOVE_ONE_LEFT);
 	}
 
 	public boolean hasCollidedRight(Block [] blocks) {
-		int rightSide = getRightLocationOfBlocks(blocks);
-		int topSide = getTopLocationOfBlocks(blocks);
-		int bottomSide = getBottomLocationOfBlocks(blocks);
-		
-		for (int i = topSide; i <= bottomSide; i++) {
-			if (isOccupied(i, rightSide + MOVE_ONE_RIGHT))
-				return true;
-		}
-		
-		return false;
+		return hasCollidedColumn(blocks, MOVE_ONE_RIGHT);
 	}
 
-	public int getGridRows() {
-		return tetrisGrid.getGridRows();
-	}
-
-	public int getGridColumns() {
-		return tetrisGrid.getGridColumns();
+	public void clearGrid() {
+		tetrisGrid.resetGrid();
 	}
 
 	public boolean isOccupied(int row, int column) {
 		return !tetrisGrid.isEmpty(row, column);
+	}
+
+	public boolean[][] getGridInfo() {
+		return tetrisGrid.getGridDataCopy();
+	}
+	
+	private boolean hasCollidedColumn(Block [] blocks, int columnChange) {
+		int leftSide = Blocks_Modifier.getLeftLocationOfBlocks(blocks);
+		int rightSide = Blocks_Modifier.getRightLocationOfBlocks(blocks);
+		int bottomSide = Blocks_Modifier.getBottomLocationOfBlocks(blocks);
+		int topSide = Blocks_Modifier.getTopLocationOfBlocks(blocks);
+		
+		for (int row = topSide; row <= bottomSide; row++) {
+			for (int column = leftSide; column <= rightSide; column++) {
+				if (Blocks_Modifier.checkBlockExists(blocks, row, column)) {
+					// probe one down to if the cell is occupied
+					// but make sure that that cell block is not part of the piece
+					if (isOccupied(row, column + columnChange) 
+							&& !Blocks_Modifier.checkBlockExists(blocks, row, column + columnChange)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean hasCollidedRow(Block [] blocks, int rowChange) {
+		int leftSide = Blocks_Modifier.getLeftLocationOfBlocks(blocks);
+		int rightSide = Blocks_Modifier.getRightLocationOfBlocks(blocks);
+		int bottomSide = Blocks_Modifier.getBottomLocationOfBlocks(blocks);
+		int topSide = Blocks_Modifier.getTopLocationOfBlocks(blocks);
+		
+		for (int row = topSide; row <= bottomSide; row++) {
+			for (int column = leftSide; column <= rightSide; column++) {
+				if (Blocks_Modifier.checkBlockExists(blocks, row, column)) {
+					// probe one down to if the cell is occupied
+					// but make sure that that cell block is not part of the piece
+					if (isOccupied(row + rowChange, column) 
+							&& !Blocks_Modifier.checkBlockExists(blocks, row + rowChange, column)) {
+						return true;
+					}
+				}
+			}
+		}	
+		return false;
 	}
 
 	private void fillMultipleGridLocations(Block [] blocks) {
@@ -151,76 +173,4 @@ public class GridManager {
 			}
 		}
 	}
-
-
-	private int getBottomLocationOfBlocks(Block[] blocks) {
-		// perform some checks.
-		int row = blocks[0].getRow();
-
-		for (int i = 1; i < blocks.length; i++) {
-			int currBlockRow = blocks[i].getRow();
-
-			if (currBlockRow > row)
-				row = currBlockRow;
-		}
-		return row;
-	}
-		
-	private int getTopLocationOfBlocks(Block[] blocks) {
-		int row = blocks[0].getRow();
-
-		for (int i = 1; i < blocks.length; i++) {
-			int currBlockRow = blocks[i].getRow();
-
-			if (currBlockRow < row)
-				row = currBlockRow;
-		}
-		return row;
-	}
-		
-	private int getLeftLocationOfBlocks(Block[] blocks) {
-		int column = blocks[0].getColumn();
-
-		for (int i = 1; i < blocks.length; i++) {
-			int currBlockColumn = blocks[i].getColumn();
-
-			if (currBlockColumn < column)
-				column = currBlockColumn;
-		}
-		return column;
-	}
-		
-	private int getRightLocationOfBlocks(Block[] blocks) {
-		int column = blocks[0].getColumn();
-
-		for (int i = 1; i < blocks.length; i++) {
-			int currBlockColumn = blocks[i].getColumn();
-
-			if (currBlockColumn > column)
-				column = currBlockColumn;
-		}
-		return column;
-	}
-	
-	// collision stuff
-	/*
-	 * public int getTetrisPieceCurrentColumn() { return
-	 * currentPiece.getColumn(); }
-	 */
-
-	/*
-	 * public void setTetrisPieceToLocation(int row, int column) { if
-	 * (currentPiece != null) currentPiece.updatePosition(row, column); }
-	 */
-
-	/*
-	 * NOT USED SINCE GRID HAS BEEN UPDATED WITH BOUNDARIES public boolean
-	 * hasReachedLeftEdge() { return currentPiece.getColumn() == 0; }
-	 * 
-	 * public boolean hasReachedRightEdge() { return currentPiece.getColumn() ==
-	 * (gridManager.getGridColumns() - 1); }
-	 * 
-	 * public boolean hasReachedBottomEdge() { return currentPiece.getRow() ==
-	 * (gridManager.getGridRows() - 1); }
-	 */
 }

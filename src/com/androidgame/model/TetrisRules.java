@@ -77,11 +77,12 @@ public class TetrisRules {
 	
 	// extend later
 	public boolean isBottomRowFilled() {
-		return gridManager.isBottomRowFilled();
+		return false;
+		//return gridManager.isBottomRowFilled();
 	}
 	
 	public void clearBottomRow() {
-		gridManager.clearBottomRow();
+		//gridManager.clearBottomRow();
 		gridManager.cascadeRowDown();
 	}
 	

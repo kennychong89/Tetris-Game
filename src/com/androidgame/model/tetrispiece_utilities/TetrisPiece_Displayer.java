@@ -22,7 +22,7 @@ public class TetrisPiece_Displayer {
 
 		printGrid(grid);
 	}
-
+	
 	public static void printPieceData(TetrisPiece piece) {
 		Block [] blocks = piece.getBlocks();
 		

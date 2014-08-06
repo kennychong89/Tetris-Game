@@ -7,8 +7,8 @@ package com.androidgame.model.tetrisgrid;
 public class Grid {
 
 	private boolean [][] tetrisGrid;
-	public final int DEFAULT_ROWS = 18;
-	public final int DEFAULT_COLUMNS = 10;
+	public static final int DEFAULT_ROWS = 18;
+	public static final int DEFAULT_COLUMNS = 10;
 	
 	/**
 	 * Initializes grid to default 18 rows by 10 columns.
@@ -119,23 +119,43 @@ public class Grid {
 		}
 	}
 	
+	public int getStartGridRow() {
+		// with boundaries, we start at 1.
+		return 1;
+	}
 	
-	/**
-	 * 
-	 * @return How many rows the grid has.
-	 */
-	public int getGridRows() {
-		// minus the boundaries
+	public int getStartGridColumn() {
+		return 1;
+	}
+	
+	public int getEndGridRow() {
 		return tetrisGrid.length - 2;
 	}
 	
-	/**
-	 * 
-	 * @return How many columns the grid has.
-	 */
-	public int getGridColumns() {
-		// minus the boundaries
+	public int getEndGridColumn() {
 		return tetrisGrid[0].length - 2;
+	}
+	
+	public boolean[][] getGridDataCopy() {
+		// retrieve copy of row, column info from original grid.
+		int tempGridRowLength = getEndGridRow();
+		int tempGridColumnLength = getEndGridColumn();
+		
+		boolean [][] temp = new boolean[tempGridRowLength][tempGridColumnLength];
+		
+		for (int row = 0; row < tempGridRowLength; row++) {
+			for (int column = 0; column < tempGridColumnLength; column++) {
+				int currentGridRow = row + 1;
+				int currentGridColumn = column + 1;
+				
+				if (!this.isEmpty(currentGridRow, currentGridColumn))
+					temp[row][column] = true;
+				else
+					temp[row][column] = false;
+			}
+		}
+		
+		return temp;
 	}
 	
 	/**

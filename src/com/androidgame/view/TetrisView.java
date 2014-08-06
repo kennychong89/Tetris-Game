@@ -1,14 +1,14 @@
 package com.androidgame.view;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Toast;
 
 /**
  * Represents the game's UI.
@@ -29,7 +29,9 @@ public class TetrisView extends View {
 	public TetrisView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
+		// two for boundaries?
 		tetrisGrid = new TetrisGridBox[GRID_ROWS][GRID_COLUMNS];
+		
 		//defaultGridPaint = new Paint();
 		//defaultGridPaint.setStrokeWidth(2);
 		//defaultGridPaint.setStyle(Style.STROKE);
@@ -43,8 +45,8 @@ public class TetrisView extends View {
 		Toast t = Toast.makeText(this.getContext(), "Test", Toast.LENGTH_LONG);
 		t.show();
 		*/
-		int roundedViewWidth = viewWidth - (viewWidth % GRID_COLUMNS);
-		int roundedViewHeight = viewHeight - (viewHeight % GRID_ROWS);
+		int roundedViewWidth = viewWidth - (viewWidth % (GRID_COLUMNS));
+		int roundedViewHeight = viewHeight - (viewHeight % (GRID_ROWS));
 		
 		//Log.d("ViewDimensions", "viewWidth % GRID_COLUMNS " + (viewWidth % GRID_COLUMNS));
 		//Log.d("ViewDimensions", "viewHeight % GRID_ROWS: " + (viewHeight % GRID_ROWS));
@@ -52,8 +54,8 @@ public class TetrisView extends View {
 		//Log.d("ViewDimensions", "roundedViewWidth: " + roundedViewWidth);
 		//Log.d("ViewDimensions", "roundedViewHeight: " + roundedViewHeight);
 		
-		int boxWidth = roundedViewWidth / GRID_COLUMNS;
-		int boxHeight = roundedViewHeight / GRID_ROWS;
+		int boxWidth = roundedViewWidth / (GRID_COLUMNS);
+		int boxHeight = roundedViewHeight / (GRID_ROWS);
 		
 
 		//Log.d("ViewDimensions", "roundedBoxWidth: " + boxWidth);
@@ -90,11 +92,24 @@ public class TetrisView extends View {
 				 paint.setStyle(Style.STROKE);
 			 
 			 // invalidate view
-			 invalidate();
+			 //invalidate();
 			 
 			 //Toast toast = Toast.makeText(this.getContext(), "Works?", Toast.LENGTH_SHORT);
 			 //toast.show(); 
 		}
+	}
+	
+	
+	public void updateGridPosition(ArrayList<Integer> rows, ArrayList<Integer> columns, int color, boolean filled) {
+		// assume rows and columns are equal for now
+		for (int i = 0; i < rows.size(); i++) {
+			int row = rows.get(i);
+			int column = columns.get(i);
+			
+			updateGridPosition(row - 1, column - 1, color, filled);
+		}
+		
+		invalidate();
 	}
 	
 	// test method - updates view by a single row with columns list
